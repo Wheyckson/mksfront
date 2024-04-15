@@ -6,6 +6,7 @@ import {
   CartItens,
   CartValue,
   CloseButton,
+  EmptyCart,
   FinishBuy,
   FooterContainer,
   OpenContainer,
@@ -31,9 +32,11 @@ export function Cart({ toggleClose }: any) {
   } = useCart();
   const [qtd, setQtd] = useState(1);
 
-  var totalPrice = cartItems
-    .map((cart) => Number(cart.price))
-    .reduce((acc, value) => acc + value);
+  var totalPrice = cartItems.length
+    ? cartItems
+        .map((cart) => Number(cart.price))
+        .reduce((acc, value) => acc + value)
+    : 0;
 
   return (
     <OpenContainer>
@@ -45,52 +48,60 @@ export function Cart({ toggleClose }: any) {
         </OpenHeader>
 
         <>
-          {cartItems.map((cartItem) => (
-            <CartItens key={cartItem.id}>
-              <Image
-                src={cartItem.photo}
-                width={130}
-                height={138}
-                alt="imagem do produto"
-              />
+          {cartItems.length ? (
+            <>
+              {cartItems.map((cartItem) => (
+                <CartItens key={cartItem.id}>
+                  <Image
+                    src={cartItem.photo}
+                    width={130}
+                    height={138}
+                    alt="imagem do produto"
+                  />
 
-              <span>{cartItem.name}</span>
+                  <span>{cartItem.name}</span>
 
-              <QtdContainer>
-                <span>Qtd:</span>
+                  <QtdContainer>
+                    <span>Qtd:</span>
 
-                <div>
-                  <button
-                    onClick={() => decrementItemQuantity(cartItem.id, qtd)}
-                    title="Diminuir quantidade"
-                  >
-                    -
-                  </button>
+                    <div>
+                      <button
+                        onClick={() => decrementItemQuantity(cartItem.id, qtd)}
+                        title="Diminuir quantidade"
+                      >
+                        -
+                      </button>
 
-                  <span> {qtd} </span>
+                      <span> {qtd} </span>
 
-                  <button
-                    onClick={() => incrementItemQuantity(cartItem.id, qtd)}
-                    title="Aumentar quantidade"
-                  >
-                    +
-                  </button>
-                </div>
-              </QtdContainer>
+                      <button
+                        onClick={() => incrementItemQuantity(cartItem.id, qtd)}
+                        title="Aumentar quantidade"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </QtdContainer>
 
-              <h1>{valueFormatter(Number(cartItem.price))}</h1>
+                  <h1>{valueFormatter(Number(cartItem.price))}</h1>
 
-              <CloseButton>
-                <X size={32} onClick={() => removeCartItem(cartItem.id)} />
-              </CloseButton>
-            </CartItens>
-          ))}
+                  <CloseButton>
+                    <X size={32} onClick={() => removeCartItem(cartItem.id)} />
+                  </CloseButton>
+                </CartItens>
+              ))}
+            </>
+          ) : (
+            <>
+              <EmptyCart>{`Seu carrinho esta vazio :´(`}</EmptyCart>
+            </>
+          )}
         </>
 
         <FooterContainer>
           <CartValue>
             <span>Total: </span>
-            <span>{valueFormatter(totalPrice)} </span>
+            <span>{cartItems.length ? valueFormatter(totalPrice) : 0} </span>
           </CartValue>
         </FooterContainer>
       </BuyWrapper>

@@ -83,6 +83,12 @@ export const CartItens = styled.div`
   }
 `;
 
+export const EmptyCart = styled.div`
+  display: flex;
+  justify-content: center;
+  color: white;
+`;
+
 export const QtdContainer = styled.div`
   display: flex;
   flex-direction: column;
