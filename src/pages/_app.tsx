@@ -1,5 +1,5 @@
 import { AppProps } from "next/app";
-import { Container } from "./styles";
+import { Container } from "../styles/pages/style";
 
 import { queryClient } from "@/api/queryClient";
 import { theme } from "@/styles";
