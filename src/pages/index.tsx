@@ -14,7 +14,7 @@ import { api } from "@/api/axios";
 import { SkeletonCard } from "@/component/SkeletonCard";
 import { valueFormatter } from "@/utils/price-formatter";
 import { useQuery } from "@tanstack/react-query";
-import { ProductsProps } from "@/context/CartProvider";
+import { IProduct, ProductsProps } from "@/context/CartProvider";
 import { useCart } from "@/hooks/useCart";
 
 const skeletonProductsArray = Array.from({ length: 8 }, (_, i) => i);
@@ -50,7 +50,7 @@ export default function Home() {
           </>
         ) : (
           <>
-            {data?.products.map((item) => {
+            {data!.products.map((item: IProduct) => {
               return (
                 <CardContainer key={item.id}>
                   <ContentWrapper>

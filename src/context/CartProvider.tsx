@@ -4,9 +4,9 @@ export interface ProductsProps {
   products: IProduct;
   count: number;
 }
-[];
 
 export interface IProduct {
+  map: any; //testing
   id: string;
   name: string;
   brand: string;
