@@ -1,6 +1,10 @@
 import { X } from "@phosphor-icons/react";
 import Image from "next/image";
 
+import { IProduct, ProductsProps } from "@/context/CartProvider";
+import { useCart } from "@/hooks/useCart";
+import { valueFormatter } from "@/utils/price-formatter";
+import { useState } from "react";
 import {
   BuyWrapper,
   CartItens,
@@ -13,30 +17,49 @@ import {
   OpenHeader,
   QtdContainer,
 } from "./styles";
-import { useCart } from "@/hooks/useCart";
-import { valueFormatter } from "@/utils/price-formatter";
-import { useState } from "react";
-import { IProduct } from "@/context/CartProvider";
-
-interface a {
-  count: number;
-  p: IProduct[];
-}
 
 export function Cart({ toggleClose }: any) {
-  const {
-    cartItems,
-    removeCartItem,
-    incrementItemQuantity,
-    decrementItemQuantity,
-  } = useCart();
-  const [qtd, setQtd] = useState(1);
+  const { cartItems, removeCartItem } = useCart();
+  const [cart, setCart] = useState<ProductsProps[]>([]);
 
-  var totalPrice = cartItems.length
-    ? cartItems
-        .map((cart) => Number(cart.price))
-        .reduce((acc, value) => acc + value)
-    : 0;
+  function handleIncrementItem(id: string, product: IProduct) {
+    const copyCart = [...cartItems];
+    const item = copyCart.find((item) => item.products.id === id);
+
+    if (!item) {
+      copyCart.push({ products: product, count: 1 });
+    } else {
+      item.count = item.count + 1;
+    }
+
+    setCart(copyCart);
+  }
+
+  function handleDecrementItem(id: string) {
+    const copyCart = [...cartItems];
+    const item = copyCart.find((item) => item.products.id === id);
+
+    if (item!.count > 1) {
+      item!.count = item!.count - 1;
+      setCart(copyCart);
+    }
+  }
+
+  function calculatingProductPrice(price: string, quantity: number) {
+    const calculating = Number(price) * quantity;
+
+    return valueFormatter(calculating);
+  }
+
+  function finalPrice() {
+    if (cartItems.length) {
+      var totalPrice = cartItems
+        .map((cart) => Number(cart.products.price) * cart.count)
+        .reduce((acc, value) => acc + value);
+
+      return valueFormatter(totalPrice);
+    }
+  }
 
   return (
     <OpenContainer>
@@ -51,31 +74,39 @@ export function Cart({ toggleClose }: any) {
           {cartItems.length ? (
             <>
               {cartItems.map((cartItem) => (
-                <CartItens key={cartItem.id}>
+                <CartItens key={cartItem.products.id}>
                   <Image
-                    src={cartItem.photo}
+                    src={cartItem.products.photo}
                     width={130}
                     height={138}
                     alt="imagem do produto"
                   />
 
-                  <span>{cartItem.name}</span>
+                  <span>{cartItem.products.name}</span>
 
                   <QtdContainer>
                     <span>Qtd:</span>
 
                     <div>
                       <button
-                        onClick={() => decrementItemQuantity(cartItem.id, qtd)}
+                        disabled={cartItem.count === 1}
+                        onClick={() =>
+                          handleDecrementItem(cartItem.products.id)
+                        }
                         title="Diminuir quantidade"
                       >
                         -
                       </button>
 
-                      <span> {qtd} </span>
+                      <span> {cartItem.count} </span>
 
                       <button
-                        onClick={() => incrementItemQuantity(cartItem.id, qtd)}
+                        onClick={() =>
+                          handleIncrementItem(
+                            cartItem.products.id,
+                            cartItem.products
+                          )
+                        }
                         title="Aumentar quantidade"
                       >
                         +
@@ -83,10 +114,18 @@ export function Cart({ toggleClose }: any) {
                     </div>
                   </QtdContainer>
 
-                  <h1>{valueFormatter(Number(cartItem.price))}</h1>
+                  <h1>
+                    {calculatingProductPrice(
+                      cartItem.products.price,
+                      cartItem.count
+                    )}
+                  </h1>
 
                   <CloseButton>
-                    <X size={32} onClick={() => removeCartItem(cartItem.id)} />
+                    <X
+                      size={32}
+                      onClick={() => removeCartItem(cartItem.products.id)}
+                    />
                   </CloseButton>
                 </CartItens>
               ))}
@@ -101,7 +140,7 @@ export function Cart({ toggleClose }: any) {
         <FooterContainer>
           <CartValue>
             <span>Total: </span>
-            <span>{cartItems.length ? valueFormatter(totalPrice) : 0} </span>
+            <span>{finalPrice()}</span>
           </CartValue>
         </FooterContainer>
       </BuyWrapper>

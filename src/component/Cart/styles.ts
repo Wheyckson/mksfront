@@ -12,6 +12,10 @@ export const OpenContainer = styled.div`
   z-index: 1;
   justify-content: space-between;
   box-shadow: 0px 0px 14px 0px darkslategray;
+
+  @media (max-width: 585px) {
+    width: auto;
+  }
 `;
 
 export const BuyWrapper = styled.div`
