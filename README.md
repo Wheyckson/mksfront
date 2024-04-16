@@ -31,4 +31,6 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 ## Deploy on Vercel
 
-[Preview LINK](<https://coffe-delivery-zeta-gules.vercel.app>)
+[Preview LINK](<[https://coffe-delivery-zeta-gules.vercel.app](https://mksfront-ow4d3uu51-wheycksons-projects.vercel.app)>)
+
+
